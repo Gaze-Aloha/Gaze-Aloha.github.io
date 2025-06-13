@@ -1,1 +1,1 @@
-https://Gaze-Aloha.github.io/
+See our full website [here](https://gaze-aloha.github.io/)
