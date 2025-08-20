@@ -56,13 +56,13 @@
             <h2 class="subtitle is-4 publication-subtitle">UCLA Summer Undergraduate Research Program</h2>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
+                   <span class="author-block">
+                  <a href="https://www.linkedin.com/in/yike-shi2004/" target="_blank">Yike Shi*</a>,</span>
                   <span class="author-block">
                   <a href="https://www.linkedin.com/in/jon-ouyang/" target="_blank">Jonathan Ouyang*</a>,</span>
+                 
                   <span class="author-block">
-                  <a href="https://www.linkedin.com/in/yike-shi2004/" target="_blank">Yike Shi*</a><sup></sup>,</span>
-                  <!-- <span class="author-block">
-                    <a href="https://www.linkedin.com/in/yuchen-cui-4702a548/" target="_blank">Yuchen Cui</a>
-                  </span> -->
+                    <a href="https://www.linkedin.com/in/yuchen-cui-4702a548/" target="_blank">Yuchen Cui</a><sup></sup>,</span>
                   </div>
 
                   <div class="is-size-5 publication-authors">
@@ -104,7 +104,7 @@
                     <span>Code</span>
                     </a>
                   </span>
-
+                  <!-- Google Doc link 
                   <span class="link-block">
                     <a href="https://docs.google.com/document/d/1huSfL79zdWfOIvUaqzXI1XtuKO4zQUFc4tvWE-A_qbI/edit?usp=sharing"
                     class="external-link button is-normal is-rounded is-dark">
@@ -114,7 +114,7 @@
                     <span>CS 188 Final Report</span>
                     </a>
                   </span>
-
+                  -->
                 <!-- <span class="link-block">
                   <a href="https://www.kaggle.com/datasets/jonouyang/sjsu-d1-swimming-dataset" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
@@ -153,7 +153,7 @@
       </h2>
       <video poster="" id="tree" autoplay controls muted loop height="100%">
         <!-- Your video here -->
-        <source src="static/videos/working1.mp4"
+        <source src="static/videos/Success_Long_H.mp4"
         type="video/mp4">
       </video>
       
@@ -170,8 +170,8 @@
         <h2 class="title is-3">Problem Statement</h2>
         <div class="content has-text-justified">
           <p>
-            Precise bimanual manipulation tasks—such as stacking, inserting, and threading—have traditionally required high-fidelity robots with expensive sensors and precise calibration. The ALOHA framework introduced a breakthrough in this space by leveraging imitation learning techniques, particularly Action Chunking and Temporal Ensembling, to enable low-cost robots to perform such tasks with minimal demonstration data. However, ALOHA’s success heavily relied on rich multi-view visual input and a dual-arm setup with wrist-mounted cameras. At the UCLA Robotics and Intelligent Learning (URIL) lab, we aim to replicate and adapt the ALOHA framework for single-arm manipulation using GALAXEA’s low-cost teleoperation hardware. Our setup lacks a front-facing camera and uses only one follower arm with a single wrist-mounted view. This project focuses on evaluating the viability of ACT-based imitation learning under constrained sensing and hardware conditions, using a simplified stacking task as a benchmark.
-          </p>
+            End-to-End Robot Learning has emerged as an effective paradigm in contemporary robotics, largely propelled by advancements in computational power, computer vision, and AI architectures. Imitation Learning(IL) enables teaching robots intricate, human-like skills. Nonetheless, conventional IL are confronted with challenges, notably multimodality, covariance shift, and error compounding. Strategies from prior research like multi-head transformer ACT and diffusion policies typically impose stringent requirements for high-quality demonstrations—often necessitating hundreds of precise and diverse expert trajectories. Furthermore, their applicability is frequently restricted to sequential actions, and their performance notably degrades as the task horizon expands. How can we achieve long-horizon robot learning with limited demonstrations and multimodal data? 
+            This project aims to address this question by GAZE.
         </div>
       </div>
     </div>
@@ -187,11 +187,12 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            This project explores the feasibility of adapting the ALOHA imitation learning framework to a constrained single-arm robotic setup. Unlike the original multi-view, bimanual ALOHA system, our implementation uses only a bird-view and wrist-mounted camera, along with a single follower arm lacking wrist-mounted sensing on the opposing side. We collected 20 expert demonstrations via teleoperation, capturing synchronized multimodal data at 50 Hz. An Action Chunking with Transformers (ACT) model was trained as a conditional variational autoencoder to predict future joint trajectories based on two camera views and past joint states. Despite hardware and data limitations, the trained policy showed smooth motion and partial task understanding but struggled with object manipulation due to occlusions and visual ambiguity. Our findings suggest that ACT-based learning retains potential even under reduced sensory input, and performance could be significantly improved with more demonstrations, better calibration, and enhanced viewpoint coverage.
+            Inspired from the human learning principles: complex tasks are decomposed into series of manageable subtasks and learning involves dynamic, selective attention to environmental cues while filtering out irrelevant information, we propose a novel and robust approach to robot imitation learning: gaze-attention-guided policy learning. Our methodology starts by directly capturing human gaze during expert demonstrations. We train a powerful gaze generative model, which predict precisely where the robot should focus its attention(gaze) at inference. We introduce a powerful mechanism that integrates this predictive gaze information, guiding the robot's policy model to discern the specific subtask currently being executed. Our experimental results demonstrate that the incorporation of our generative gaze model enables the learning of non-sequential actions from a more flexible set of demonstrations, and show better performance on long-horizon tasks.
+
+            Key Words: Robotics, Imitation Learning, Human-Robot Interaction, Egocentric Vision
           </p>
-          <figure>
-            <img src="static/images/ACT1.png">
-            <figcaption>Figure 1: the original ACT architecture with 4 cameras from the ALOHA paper we base our work off of</figcaption>
+            <img src="static/images/Demo-Photoroom.jpg">
+            <figcaption>Figure 1: Getting Gaze Data from Aria when teleoperate Robot Arms to finish Tasks</figcaption>
           </figure>
         </div>
       </div>
@@ -208,20 +209,36 @@
         <h2 class="title is-3">Methodology</h2>
         <div class="content has-text-justified">
           <p>
-            We designed a data collection pipeline using GALAXEA’s single-arm teleoperation system to record synchronized multimodal data from a top-down (Logitech) and wrist-mounted (Realsense) camera, along with 7-DOF joint positions at 50 Hz. Each demonstration was about 18 seconds long, and we collected 20 total. To address temporal misalignment between data streams, we implemented synchronization in the PyTorch dataloader using a ±0.02s window. 
+            We designed a data collection pipeline using GALAXEA’s single-arm teleoperation system to record synchronized multimodal data from a top-down (Logitech) and wrist-mounted (Realsense) camera, along with 7-DOF joint positions at 50 Hz. Each demonstration was about 45 seconds long, and we collected 37 total. To address temporal misalignment between data streams, we implemented synchronization in the PyTorch dataloader using a ±0.02s window. 
           </p>
           <video poster="" id="tree" autoplay controls muted loop height="100%">
             <!-- Your video here -->
-            <source src="static/videos/training.mp4"
+            <source src="static/videos/collection.mp4"
             type="video/mp4">
           </video>
           <p>
-            For policy learning, we adapted the ACT model as a Conditional Variational Autoencoder: an encoder compresses joint and action history into a latent variable z, and a transformer-based decoder predicts future joint trajectories from images, joints, and 
-𝑧
-z. The model uses ResNet-18 for image encoding, 4 transformer encoder layers, 7 decoder layers, and is optimized with AdamW over 1000 epochs using an L1 + KL divergence loss.
-
-
+            We trained a gaze prediction model with 2 ways: a MDN(Multi-Density-Network) + GMM(Gaussian Mixture Model) and a UNet. The MDN model predicts a distribution over gaze points, while the UNet predicts gaze heatmap. We then used the predicted gaze to guide the policy model.
           </p>
+          <img src="static/images/MDN.jpg">
+            <figcaption>Figure 2: MDN+GMM Predicted Gaze. X is the means of gaussian blobs</figcaption>
+          </figure>
+          <video
+            src="static/videos/gaze_prediction.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+          ></video>
+          <img src="static/images/UNet.jpg">
+            <figcaption>Figure 3: UNet Predicted Gaze. Red stands for high confidence region. Green is the most confident point(gaze point)</figcaption>
+          </figure>
+          <p>
+            The noisy nature of gaze data led us to think about using them as a guiding signal for the policy model. Inspired by human brain, where different regions are responsible for different tasks, we hypothesized that gaze can be used to guide the policy model to focus on the right subtask. We trained multiple Vanilla ACT(Action Chunking Transformer), each represents a skill. We then trained a Gaze-foveated Selector, which predicts which subtask to execute and which policy model to use. A Done Token is also predicted to indicate the end of a subtask. 
+          </p>
+          <img src="static/images/Selector-1.jpg">
+          <img src="static/images/Selector-2.jpg">
+            <figcaption>Figure 4: Selector I/O sample and architecture</figcaption>
+          </figure>
         </div>
       </div>
     </div>
@@ -229,75 +246,6 @@ z. The model uses ResNet-18 for image encoding, 4 transformer encoder layers, 7 
 </section>
 <!-- End paper abstract -->
 
-<!-- Paper abstract -->
-<section class="section hero is-light">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Discussion & Limitations</h2>
-        <div class="content has-text-justified">
-          <p>
-            Our results highlight both the promise and challenges of imitation learning under constrained setups. The two-camera configuration lacked the full spatial awareness provided in ALOHA’s four-view system, and occlusions in the bird-view camera reduced perceptual consistency. Our dataset of 20 demonstrations was also likely too small to ensure generalization, especially in the presence of hardware noise and offset mismatches between teleoperation and execution. Additionally, running inference at only 30 Hz (due to camera limitations) may have introduced latency. 
-          </p>
-          <video poster="" id="tree" autoplay controls muted loop height="100%">
-            <!-- Your video here -->
-            <source src="static/videos/bad.mp4"
-            type="video/mp4">
-          </video>
-          <p>
-            Despite these issues, the ACT framework showed potential, and we believe performance can be significantly improved with more data, better calibration, and enhanced visual coverage.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Failure Cases -->
-<h2 class="has-text-centered title is-3 mt-3">Failure Cases</h2><section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div class="video-carousel-container">
-        <div class="video-item">
-          <video
-            src="static/videos/c1.mp4"
-            autoplay
-            muted
-            loop
-            playsinline
-          ></video>
-        <p class="subtitle is-size-6 has-text-centered">
-          Robot appears to attempt to go to red object location
-        </p>        
-        </div>
-        <div class="video-item">
-          <video
-            src="static/videos/c2.mp4"
-            autoplay
-            muted
-            loop
-            playsinline
-          ></video>
-          <p class="subtitle is-size-6 has-text-centered">
-          Policy has been severely overfit, robot no longer reacts to state changes
-          </p> 
-        </div>
-        <div class="video-item">
-          <video
-            src="static/videos/c3.mp4"
-            autoplay
-            muted
-            loop
-            playsinline
-          ></video>
-          <p class="subtitle is-size-6 has-text-centered">
-          Model displays odd oscillating behavior
-          </p> 
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <style>
 .video-carousel-container {
